@@ -1,6 +1,8 @@
 #!/bin/bash
 set -e
 
+export IFS=''
+
 INPUT_PATH="${INPUT_PATH:-.}"
 INPUT_DOCKERFILE="${INPUT_DOCKERFILE:-Dockerfile}"
 INPUT_TAGS="${INPUT_TAGS:-latest}"
