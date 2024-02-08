@@ -1,8 +1,6 @@
 #!/bin/bash
 set -e
 
-export IFS=''
-
 INPUT_PATH="${INPUT_PATH:-.}"
 INPUT_DOCKERFILE="${INPUT_DOCKERFILE:-Dockerfile}"
 INPUT_TAGS="${INPUT_TAGS:-latest}"
@@ -137,11 +135,13 @@ function docker_build() {
 
   if [ -n "${INPUT_CACHE_FROM}" ]; then
     for i in ${INPUT_CACHE_FROM//,/ }; do
+      echo $i
       docker pull $i
     done
 
     INPUT_EXTRA_BUILD_ARGS="$INPUT_EXTRA_BUILD_ARGS --cache-from=$INPUT_CACHE_FROM"
   fi
+  export IFS=''
   echo "== COMMAND"
   echo "docker build $INPUT_EXTRA_BUILD_ARGS -f $INPUT_DOCKERFILE $docker_tag_args $INPUT_PATH"
   docker build $INPUT_EXTRA_BUILD_ARGS -f $INPUT_DOCKERFILE $docker_tag_args $INPUT_PATH
