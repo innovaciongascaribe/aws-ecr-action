@@ -1,25 +1,25 @@
-name: Release
+name: Continuous Integration
 
 on:
   push:
+    paths:
+      - Dockerfile
+      - entrypoint.sh
     branches:
       - master
 
 jobs:
-  release:
+  push-to-docker:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-
-      - name: docker login
-        run: |
-          echo $GCR_TOKEN | docker login ghcr.io -u $GITHUB_ACTOR --password-stdin
-        env:
-          GCR_TOKEN: ${{ secrets.GCR_TOKEN }}
-
-      - name: build and push latest docker image to GCR
-        run: |
-          docker pull ghcr.io/kciter/aws-ecr-action:latest
-          docker build . --tag ghcr.io/kciter/aws-ecr-action:$GITHUB_SHA --cache-from ghcr.io/kciter/aws-ecr-action:latest
-          docker push ghcr.io/kciter/aws-ecr-action:$GITHUB_SHA
+    - uses: actions/checkout@v4
+    - uses: elgohr/Publish-Docker-Github-Action@v5
+      name: Publish to Docker
+      with:
+        name: innovaciongascaribe/aws-ecr-action
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+        tags: latest,v4
+        cache: true
